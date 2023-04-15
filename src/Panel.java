@@ -4,22 +4,23 @@ import java.awt.event.*;
 import java.text.DecimalFormat;
 
 public class Panel extends JPanel implements ActionListener {
-    private int PANEL_WIDTH, PANEL_HEIGHT;
+    MouseListener mouseListener = new MouseListener(this);
+    UI ui = new UI(this, mouseListener);
+    private final int PANEL_WIDTH, PANEL_HEIGHT;
     private long startTime, elapsedTime;
-    private int milSeconds, seconds, minutes, hours;
+    private int milSeconds, seconds, minutes, hours, blinkCount;
     private boolean isMoreThanMinute, isMoreThan10Minutes, isMoreThanHour, isRunning, isPaused;
     private Timer timer;
     private Color backgroundColor, fontColor;
     private Font milSecondsFont, timeFieldFont;
-    private JPanel panelForButtons;
-    private JButton start, reset;
+    private JButton startButton, resetButton;
     private JTextField milSecondsField, timeField;
     private DecimalFormat df = new DecimalFormat("00");
 
     Panel() {
         //PARAMETERS
         PANEL_WIDTH = 350;
-        PANEL_HEIGHT = 400;
+        PANEL_HEIGHT = 425;
 
         //FONTS
         milSecondsFont = new Font("Monospaced", 0, 44);
@@ -30,28 +31,46 @@ public class Panel extends JPanel implements ActionListener {
         fontColor = new Color(250, 235, 235);
 
         //BUTTONS
-        timeField = new JTextField("00");
-        milSecondsField = new JTextField();
+        startButton = new JButton("▶");
+        startButton.setFont(new Font(".AppleSystemUIFont", 0,23));
+        startButton.setForeground(Color.BLACK);
+        startButton.addActionListener(this);
+        startButton.addMouseListener(mouseListener);
+        startButton.setBounds(131,325,90,90);
+        startButton.setBorderPainted(false);
+        startButton.setOpaque(false);
 
-        milSecondsField.setBounds(43, 159, 180, 45);
+        resetButton = new JButton("↻");
+        resetButton.setFont(new Font(".AppleSystemUIFont", 0, 23));
+        resetButton.addActionListener(this);
+        resetButton.addMouseListener(mouseListener);
+        resetButton.setBounds(48,343,54,54);
+        resetButton.setOpaque(false);
+        resetButton.setBorderPainted(false);
+        resetButton.setVisible(false);
+
+        //TEXT FIELDS
+        timeField = new JTextField("00");
+        milSecondsField = new JTextField("00");
+
+        milSecondsField.setBounds(43, 169, 180, 45);
         milSecondsField.setHorizontalAlignment(SwingConstants.RIGHT);
         milSecondsField.setFont(milSecondsFont);
-        milSecondsField.setForeground(fontColor);
+        milSecondsField.setDisabledTextColor(fontColor);
         milSecondsField.setBackground(backgroundColor);
         milSecondsField.setBorder(null);
+        milSecondsField.setEditable(false);
+        milSecondsField.setEnabled(false);
 
 
-        timeField.setBounds(43, 100, 180, 60);
+        timeField.setBounds(43, 110, 180, 60);
         timeField.setHorizontalAlignment(SwingConstants.RIGHT);
         timeField.setFont(timeFieldFont);
-        timeField.setForeground(fontColor);
+        timeField.setDisabledTextColor(fontColor);
         timeField.setBackground(backgroundColor);
         timeField.setBorder(null);
-
-        //PANEL FOR BUTTONS
-        panelForButtons = new JPanel();
-        panelForButtons.setBounds(0,328,PANEL_WIDTH,60);
-        panelForButtons.setBackground(Color.yellow);
+        timeField.setEditable(false);
+        timeField.setEnabled(false);
 
 
         //PANEL
@@ -59,54 +78,76 @@ public class Panel extends JPanel implements ActionListener {
         this.setPreferredSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
         this.add(timeField);
         this.add(milSecondsField);
+        this.add(startButton);
+        this.add(resetButton);
         this.setBackground(backgroundColor);
-        this.add(panelForButtons);
         this.setFocusable(true);
 
-
-        timer = new Timer(1, e -> {
-            elapsedTime = System.currentTimeMillis() - startTime;
-            timerUpdate();
-        });
-        stopwatchStart();
+        timer = new Timer(10, e -> timerUpdate());
     }
 
     void stopwatchStart() {
-        //HOUR
-        //startTime = System.currentTimeMillis() - 3598000;
-        //9 HOUR
-        //startTime = System.currentTimeMillis() - 35998000;
-        //MINUTE
-        //startTime = System.currentTimeMillis() - 58000;
-        //10 MINUTES
-        //startTime = System.currentTimeMillis() - 598000;
-        startTime = System.currentTimeMillis();
-        timer.start();
+        isRunning = true;
+        startButton.setText("⏸");
+        startButton.setFont(new Font(".AppleSystemUIFont", 0,25));
+        resetButton.setVisible(true);
+        milSecondsField.setVisible(true);
+        timeField.setVisible(true);
+        if(!isPaused) {
+            //HOUR
+            //startTime = System.currentTimeMillis() - 3598000;
+            //9 HOUR
+            //startTime = System.currentTimeMillis() - 35998000;
+            //MINUTE
+            //startTime = System.currentTimeMillis() - 58000;
+            //10 MINUTES
+            //startTime = System.currentTimeMillis() - 598000;
+            startTime = System.currentTimeMillis();
+            timer.start();
+        }
+        isPaused = false;
     }
 
-    void stopwatchStop() {
+    void stopwatchReset(){
+        milSecondsField.setText("00");
+        timeField.setText("00");
+        milSecondsField.setBounds(43, 169, 180, 45);
+        timeField.setBounds(43, 110, 180, 60);
+        startButton.setText("▶");
+        isRunning = false;
+        isPaused = false;
+        resetButton.setVisible(false);
+        milSecondsField.setVisible(true);
+        timeField.setVisible(true);
         timer.stop();
+    }
+
+    void stopwatchPause() {
+        isRunning = false;
+        isPaused = true;
+        startButton.setText("▶");
+        startButton.setFont(new Font(".AppleSystemUIFont", 0,22));
     }
 
     void timerSizeCheck(){
         if(!isMoreThanMinute && minutes == 1){
-            timeField.setBounds(43, 100, 225, 60);
-            milSecondsField.setBounds(43, 159, 225, 45);
+            timeField.setBounds(43, 110, 225, 60);
+            milSecondsField.setBounds(43, 169, 225, 45);
 
             isMoreThanMinute = true;
         }
         else if(!isMoreThan10Minutes && minutes == 10){
-            timeField.setBounds(43, 100, 245, 60);
-            milSecondsField.setBounds(43, 159, 245, 45);
+            timeField.setBounds(43, 110, 245, 60);
+            milSecondsField.setBounds(43, 169, 245, 45);
 
             isMoreThan10Minutes = true;
         }
         else if(!isMoreThanHour && hours == 1){
-            milSecondsField.setBounds(43, 156, 261, 40);
+            milSecondsField.setBounds(43, 166, 261, 40);
             milSecondsFont = new Font("Monospaced", 0, 34);
             milSecondsField.setFont(milSecondsFont);
 
-            timeField.setBounds(43, 103, 261, 55);
+            timeField.setBounds(43, 113, 261, 55);
             timeFieldFont = new Font("Monospaced", 0, 60);
             timeField.setFont(timeFieldFont);
 
@@ -116,10 +157,17 @@ public class Panel extends JPanel implements ActionListener {
 
 
     public void timerUpdate() {
+        if(isRunning) elapsedTime = System.currentTimeMillis() - startTime;
+        else if(isPaused){
+            startTime = System.currentTimeMillis() - elapsedTime;
+            blinking();
+        }
+
+
         milSeconds = (int) (elapsedTime % 1000) / 10;
         seconds = (int) (elapsedTime / 1000) % 60;
         minutes = (int) (elapsedTime / 60000) % 60;
-        hours =   (int) (elapsedTime / 3600000);
+        hours = (int) (elapsedTime / 3600000);
 
         timerSizeCheck();
 
@@ -130,29 +178,69 @@ public class Panel extends JPanel implements ActionListener {
             milSecondsField.setText(df.format(milSeconds));
             timeField.setText(minutes + ":" + df.format(seconds));
         } else if (hours >= 1) {
-            if(hours == 10){
+            if (hours == 10) {
                 timer.stop();
-            }
-            else {
+            } else {
                 milSecondsField.setText(df.format(milSeconds));
                 timeField.setText(hours + ":" + df.format(minutes) + ":" + df.format(seconds));
             }
         }
     }
 
+    public void blinking(){
+        blinkCount++;
+        if(blinkCount < 40) {
+            milSecondsField.setVisible(false);
+            timeField.setVisible(false);
+        }
+        else if(blinkCount > 40 && blinkCount < 80){
+            milSecondsField.setVisible(true);
+            timeField.setVisible(true);
+        }
+        else if(blinkCount > 80){
+            blinkCount = 0;
+        }
+    }
+
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
-        g2d.setPaint(new Color(50,70,70));
-        g2d.setStroke(new BasicStroke(10));
-        g2d.drawOval(25, 10, 300, 300);
-    }
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); // Włącza antyaliasing, wygładza okręgi
 
+        ui.paintPlayButton(g2d);
+        ui.paintResetButton(g2d);
+        ui.paintCircle(g2d);
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(e.getSource() == panelForButtons){
-            System.out.println("siema");
+        if (e.getSource() == startButton) {
+            if (isRunning) stopwatchPause();
+            else stopwatchStart();
         }
+        else if (e.getSource() == resetButton){
+            stopwatchReset();
+        }
+    }
+
+
+    public boolean isRunning() {
+        return isRunning;
+    }
+
+    public boolean isPaused() {
+        return isPaused;
+    }
+
+    public Color getBackgroundColor() {
+        return backgroundColor;
+    }
+
+    public JButton getStartButton() {
+        return startButton;
+    }
+
+    public JButton getResetButton() {
+        return resetButton;
     }
 }
