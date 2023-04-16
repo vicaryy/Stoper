@@ -9,12 +9,12 @@ public class UI {
     }
 
     void paintPlayButton(Graphics2D g2d){
-        g2d.setPaint(new Color(80, 180, 210));
+        g2d.setPaint(new Color(168, 200, 251));
         if(mouseListener.startEntered){
-            g2d.setPaint(new Color(80, 173, 210));
+            g2d.setPaint(new Color(168, 180, 251));
         }
         if(mouseListener.startPressed && mouseListener.startEntered){
-            g2d.setPaint(new Color(40, 140, 210));
+            g2d.setPaint(new Color(168, 150, 251));
         }
 
 
@@ -42,7 +42,10 @@ public class UI {
     }
 
     void paintCircle(Graphics2D g2d){
-        g2d.setPaint(new Color(50,70,70));
+        g2d.setPaint(new Color(50, 70, 70));
+        if(mouseListener.circlePressed){
+            g2d.setPaint(new Color(80, 90, 90));
+        }
         g2d.setStroke(new BasicStroke(10));
         g2d.drawOval(25, 10, 300, 300);
     }
