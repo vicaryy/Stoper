@@ -7,7 +7,8 @@ public class Main {
             UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
             UIManager.put("Button.foreground", Color.WHITE);
             UIManager.put("ButtonUI", "javax.swing.plaf.basic.BasicButtonUI");
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException |
+                 UnsupportedLookAndFeelException ex) {
             ex.printStackTrace();
         }
         new Frame();

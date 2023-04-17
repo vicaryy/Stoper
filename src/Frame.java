@@ -6,7 +6,10 @@ public class Frame extends JFrame {
     Color frameColor = new Color(24,23,23);
     Frame(){
         //FRAME
-        this.getRootPane().putClientProperty("apple.awt.transparentTitleBar", true);
+        String os = System.getProperty("os.name").toLowerCase();
+        if(os.contains("mac")) {
+            this.getRootPane().putClientProperty("apple.awt.transparentTitleBar", true);
+        }
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setBackground(frameColor);
         this.setResizable(false);

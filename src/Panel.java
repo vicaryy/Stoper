@@ -36,19 +36,19 @@ public class Panel extends JPanel implements ActionListener {
 
         //PANELS
         circlePanel = new JPanel();
-        circlePanel.setBounds(35,20,280,280);
+        circlePanel.setBounds(35, 20, 280, 280);
         circlePanel.setBackground(Color.yellow);
         circlePanel.setOpaque(false);
         circlePanel.addMouseListener(mouseListener);
 
         //BUTTONS
         startButton = new JButton("▶");
-        startButton.setFont(new Font(".AppleSystemUIFont", Font.PLAIN,23));
+        startButton.setFont(new Font(".AppleSystemUIFont", Font.PLAIN, 23));
         startButton.setForeground(Color.BLACK);
         startButton.addActionListener(this);
         startButton.addMouseListener(mouseListener);
         startButton.addKeyListener(keyboardListener);
-        startButton.setBounds(131,325,90,90);
+        startButton.setBounds(131, 325, 90, 90);
         startButton.setBorderPainted(false);
         startButton.setOpaque(false);
 
@@ -57,7 +57,7 @@ public class Panel extends JPanel implements ActionListener {
         resetButton.addActionListener(this);
         resetButton.addMouseListener(mouseListener);
         resetButton.addKeyListener(keyboardListener);
-        resetButton.setBounds(48,343,54,54);
+        resetButton.setBounds(48, 343, 54, 54);
         resetButton.setOpaque(false);
         resetButton.setBorderPainted(false);
         resetButton.setVisible(false);
@@ -101,6 +101,7 @@ public class Panel extends JPanel implements ActionListener {
         this.setBackground(backgroundColor);
         this.setFocusable(true);
 
+
         restTimer = new Timer(10, e -> repaint());
         restTimer.start();
 
@@ -110,19 +111,11 @@ public class Panel extends JPanel implements ActionListener {
     void stopwatchStart() {
         isRunning = true;
         startButton.setText("⏸");
-        startButton.setFont(new Font(".AppleSystemUIFont", Font.PLAIN,25));
+        startButton.setFont(new Font(".AppleSystemUIFont", Font.PLAIN, 25));
         resetButton.setVisible(true);
         milSecondsField.setVisible(true);
         timeField.setVisible(true);
-        if(!isPaused) {
-            //HOUR
-            //startTime = System.currentTimeMillis() - 3598000;
-            //9 HOUR
-            //startTime = System.currentTimeMillis() - 35998000;
-            //MINUTE
-            //startTime = System.currentTimeMillis() - 58000;
-            //10 MINUTES
-            //startTime = System.currentTimeMillis() - 598000;
+        if (!isPaused) {
             startTime = System.currentTimeMillis();
             timer.start();
             restTimer.stop();
@@ -130,7 +123,7 @@ public class Panel extends JPanel implements ActionListener {
         isPaused = false;
     }
 
-    void stopwatchReset(){
+    void stopwatchReset() {
         milSecondsField.setText("00");
         timeField.setText("00");
         milSecondsField.setBounds(163, 169, 60, 45);
@@ -152,23 +145,21 @@ public class Panel extends JPanel implements ActionListener {
         isRunning = false;
         isPaused = true;
         startButton.setText("▶");
-        startButton.setFont(new Font(".AppleSystemUIFont", Font.PLAIN,22));
+        startButton.setFont(new Font(".AppleSystemUIFont", Font.PLAIN, 22));
     }
 
-    void timerSizeCheck(){
-        if(!isMoreThanMinute && minutes == 1){
+    void timerSizeCheck() {
+        if (!isMoreThanMinute && minutes == 1) {
             timeField.setBounds(78, 110, 190, 60);
             milSecondsField.setBounds(211, 169, 57, 45);
 
             isMoreThanMinute = true;
-        }
-        else if(!isMoreThan10Minutes && minutes == 10){
+        } else if (!isMoreThan10Minutes && minutes == 10) {
             timeField.setBounds(58, 110, 230, 60);
             milSecondsField.setBounds(230, 169, 58, 45);
 
             isMoreThan10Minutes = true;
-        }
-        else if(!isMoreThanHour && hours == 1){
+        } else if (!isMoreThanHour && hours == 1) {
             milSecondsField.setBounds(257, 166, 47, 40);
             milSecondsFont = new Font("Monospaced", Font.PLAIN, 34);
             milSecondsField.setFont(milSecondsFont);
@@ -184,8 +175,8 @@ public class Panel extends JPanel implements ActionListener {
 
     public void timerUpdate() {
         repaint();
-        if(isRunning) elapsedTime = System.currentTimeMillis() - startTime;
-        else if(isPaused) {
+        if (isRunning) elapsedTime = System.currentTimeMillis() - startTime;
+        else if (isPaused) {
             startTime = System.currentTimeMillis() - elapsedTime;
             blinking();
             return;
@@ -214,21 +205,15 @@ public class Panel extends JPanel implements ActionListener {
         }
     }
 
-    public void blinking(){
+    public void blinking() {
         blinkCount++;
-        if(mouseListener.circlePressed){
+        if (blinkCount > 40 && blinkCount < 80 || mouseListener.circlePressed) {
             milSecondsField.setVisible(true);
             timeField.setVisible(true);
-        }
-        else if(blinkCount < 40) {
+        } else if (blinkCount < 40) {
             milSecondsField.setVisible(false);
             timeField.setVisible(false);
-        }
-        else if(blinkCount > 40 && blinkCount < 80){
-            milSecondsField.setVisible(true);
-            timeField.setVisible(true);
-        }
-        else if(blinkCount > 80){
+        } else if (blinkCount > 80) {
             blinkCount = 0;
         }
     }
@@ -248,8 +233,7 @@ public class Panel extends JPanel implements ActionListener {
         if (e.getSource() == startButton) {
             if (isRunning) stopwatchPause();
             else stopwatchStart();
-        }
-        else if (e.getSource() == resetButton){
+        } else if (e.getSource() == resetButton) {
             stopwatchReset();
         }
     }
@@ -274,6 +258,7 @@ public class Panel extends JPanel implements ActionListener {
     public JButton getResetButton() {
         return resetButton;
     }
+
     public JPanel getCirclePanel() {
         return circlePanel;
     }

@@ -22,10 +22,9 @@ public class MouseListener implements java.awt.event.MouseListener {
         } else if (e.getSource() == panel.getResetButton()) {
             resetPressed = true;
         }
-        else if (distance <= 156) {
+        else if (distance <= 156 || Double.isNaN(distance)) {
             circlePressed = true;
         }
-        System.out.println(distance);
     }
 
 
@@ -38,7 +37,7 @@ public class MouseListener implements java.awt.event.MouseListener {
         else if(e.getSource() == panel.getResetButton()){
             resetPressed = false;
         }
-        else if (distance <= 156) {
+        else if (distance <= 156 || Double.isNaN(distance)) {
             circlePressed = false;
             panel.getStartButton().doClick();
         }
